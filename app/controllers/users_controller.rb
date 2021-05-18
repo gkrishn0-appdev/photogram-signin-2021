@@ -5,6 +5,10 @@ class UsersController < ApplicationController
     render({ :template => "users/index.html" })
   end
 
+    def new_registration_form
+      render({ :template => "users/signup_form.html.erb" })
+    end
+
   def show
     the_username = params.fetch("the_username")
     @user = User.where({ :username => the_username }).at(0)
