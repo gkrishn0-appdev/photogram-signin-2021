@@ -8,6 +8,7 @@ class UsersController < ApplicationController
     def new_registration_form
       render({ :template => "users/signup_form.html.erb" })
     end
+
    def new_session_form
       render({ :template => "users/signin_form.html.erb" })
     end
@@ -21,6 +22,7 @@ class UsersController < ApplicationController
       else
         if (user.authenticate(pw))
           session.store(:user_id,user.id)
+          session.store(:user_username, un)
           redirect_to("/", {:notice => "Welcome back " + user.username})
         else
           redirect_to("/user_sign_in", {:alert => "wrong password"})
@@ -51,6 +53,7 @@ class UsersController < ApplicationController
 
     if (save_status)
       session.store(:user_id, user.id)
+      session.store(:user_username, user.username)
       redirect_to("/users/#{user.username}", { :notice => "Welcome, " + user.username + "!"})
     else
       redirect_to("/user_sign_up", {:alert => user.errors.full_messages.to_sentence})
