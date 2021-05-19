@@ -8,22 +8,39 @@ class UsersController < ApplicationController
     def new_registration_form
       render({ :template => "users/signup_form.html.erb" })
     end
-
+   def new_session_form
+      render({ :template => "users/signin_form.html.erb" })
+    end
+     def authenticate
+      render({ :plain => "hi" })
+    end
   def show
     the_username = params.fetch("the_username")
     @user = User.where({ :username => the_username }).at(0)
 
     render({ :template => "users/show.html.erb" })
   end
+  def toast_cookies
+    reset_session
+    redirect_to("/", {:notice => "See ya later"})
+  end
 
   def create
     user = User.new
 
     user.username = params.fetch("input_username")
+    user.password = params.fetch("input_password")
+    user.password_confirmation = params.fetch("input_password_confirmation")
 
-    user.save
+    save_status = user.save
 
-    redirect_to("/users/#{user.username}")
+    if (save_status)
+      session.store(:user_id, user.id)
+      redirect_to("/users/#{user.username}", { :notice => "Welcome, " + user.username + "!"})
+    else
+      redirect_to("/user_sign_up", {:alert => user.errors.full_messages.to_sentence})
+    end
+    
   end
 
   def update
